@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+    <title>Cadastrar Tarefa</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f4f4f4; padding: 20px; }
+        .container { border: 1px solid #ccc; background-color: #fff; max-width: 600px; margin: auto; }
+        .header { background-color: #e9ecef; padding: 15px; font-size: 1.2em; border-bottom: 1px solid #ccc; }
+        .form-body { padding: 20px; }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 15px;
+            align-items: center;
+        }
+        .form-grid-full { grid-column: 1 / -1; }
+        .form-grid label { text-align: right; }
+        .form-grid input, .form-grid textarea, .form-grid select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-grid .button-container {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .form-grid .button-container input {
+            cursor: pointer;
+            padding: 10px 20px;
+            background-color: #f8f9fa;
+        }
+        .select-group { display: flex; gap: 10px; align-items: center; }
+        .select-group select { flex: 1; }
+        .select-group label { width: 120px; text-align: right; }
+    </style>
+</h:head>
+
+<h:body>
+    <div class="container">
+        <div class="header">
+            Cadastrar Tarefa
+        </div>
+        <div class="form-body">
+            <h:messages style="color:red;"/>
+
+            <h:form>
+                <div class="form-grid">
+                    <h:outputLabel for="titulo" value="Título:"/>
+                    <h:inputText id="titulo" value="#{tarefaController.tarefaRequest.titulo}" required="true" requiredMessage="O título é obrigatório."/>
+
+                    <h:outputLabel for="descricao" value="Descrição:"/>
+                    <h:inputTextarea id="descricao" value="#{tarefaController.tarefaRequest.descricao}" rows="5" style="resize: vertical;"/>
+
+                    <div class="form-grid-full select-group">
+                        <h:outputLabel for="responsavel" value="Responsável:"/>
+                        <h:selectOneMenu id="responsavel" value="#{tarefaController.tarefaRequest.responsavelId}" required="true" requiredMessage="Selecione um responsável.">
+                            <f:selectItem itemLabel="Selecione" itemValue="#{null}" noSelectionOption="true"/>
+                            <f:selectItems value="#{tarefaController.responsaveis}" var="resp"
+                                           itemValue="#{resp.id}" itemLabel="#{resp.nome}"/>
+                        </h:selectOneMenu>
+
+                        <h:outputLabel for="prioridade" value="Prioridade:"/>
+                        <h:selectOneMenu id="prioridade" value="#{tarefaController.tarefaRequest.prioridade}" required="true" requiredMessage="Selecione uma prioridade.">
+                            <f:selectItem itemLabel="Selecione" itemValue="#{null}" noSelectionOption="true"/>
+                            <f:selectItems value="#{tarefaController.prioridades}" var="prio"
+                                           itemValue="#{prio}" itemLabel="#{prio}"/>
+                        </h:selectOneMenu>
+                    </div>
+
+                    <h:outputLabel for="deadline" value="Deadline:"/>
+                    <h:inputText id="deadline" value="#{tarefaController.tarefaRequest.deadline}" label="Deadline" placeholder="AAAA-MM-DD">
+                        <f:convertDateTime pattern="yyyy-MM-dd" />
+                    </h:inputText>
+
+                    <div class="button-container">
+                        <h:commandButton value="Cadastrar" action="#{tarefaController.criarTarefa}"/>
+                    </div>
+                </div>
+            </h:form>
+        </div>
+    </div>
+</h:body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+    <title>Listagem de Tarefas</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f4f4f4; padding: 20px; }
+        .container { border: 1px solid #ccc; background-color: #fff; max-width: 900px; margin: auto; }
+        .header { background-color: #e9ecef; padding: 15px; font-size: 1.2em; border-bottom: 1px solid #ccc; }
+        .content { padding: 20px; }
+        .filter-grid { display: grid; grid-template-columns: auto 1fr auto 1fr auto; gap: 10px; align-items: center; margin-bottom: 20px;}
+        .filter-grid input, .filter-grid select { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        .filter-grid .button { padding: 8px 15px; cursor: pointer; }
+        .task-table { border-collapse: collapse; width: 100%; }
+        .task-table th, .task-table td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+        .task-table th { background-color: #adb5bd; color: white; }
+        .task-table .actions a { margin: 0 5px; color: #007bff; text-decoration: none; }
+        .even-row { background-color: #f8f9fa; }
+    </style>
+</h:head>
+
+<h:body>
+    <div class="container">
+        <div class="header">
+            Listagem de Tarefas
+        </div>
+        <div class="content">
+            <h:form id="filtroForm">
+                <div class="filter-grid">
+                    <h:outputLabel for="numero" value="Número:"/>
+                    <h:inputText id="numero" value="#{tarefaController.filtro.id}"/>
+
+                    <h:outputLabel for="titulo" value="Título/Descrição:"/>
+                    <h:inputText id="titulo" value="#{tarefaController.filtro.tituloDescricao}"/>
+
+                    <div></div> <h:outputLabel for="responsavel" value="Responsável:"/>
+                    <h:selectOneMenu id="responsavel" value="#{tarefaController.filtro.responsavelId}">
+                        <f:selectItem itemLabel="Selecione" itemValue="#{null}" noSelectionOption="true"/>
+                        <f:selectItems value="#{tarefaController.responsaveis}" var="resp"
+                                       itemValue="#{resp.id}" itemLabel="#{resp.nome}"/>
+                    </h:selectOneMenu>
+
+                    <h:outputLabel for="situacao" value="Situação:"/>
+                    <h:selectOneMenu id="situacao" value="#{tarefaController.filtro.situacao}">
+                        <f:selectItem itemLabel="Selecione" itemValue="#{null}" noSelectionOption="true"/>
+                        <f:selectItems value="#{tarefaController.situacoes}" />
+                    </h:selectOneMenu>
+
+                    <h:commandButton styleClass="button" value="Buscar Tarefas" action="#{tarefaController.buscar}">
+                        <f:ajax execute="@form" render=":tabelaForm:tabelaTarefas"/>
+                    </h:commandButton>
+                </div>
+            </h:form>
+
+            <h:form id="tabelaForm">
+                <h:dataTable id="tabelaTarefas" value="#{tarefaController.tarefas}" var="tarefa"
+                             styleClass="task-table" rowClasses="even-row,">
+                    <h:column>
+                        <f:facet name="header">Número</f:facet>
+                        #{tarefa.id}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Título</f:facet>
+                        #{tarefa.titulo}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Responsável</f:facet>
+                        #{tarefa.responsavelNome}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Ações</f:facet>
+                        <div class="actions">
+                            <h:link value="Editar" outcome="editarTarefa.xhtml">
+                                <f:param name="id" value="#{tarefa.id}"/>
+                            </h:link> |
+
+                            <h:commandLink value="Excluir" action="#{tarefaController.deletarTarefa(tarefa.id)}">
+                                <f:ajax render=":tabelaForm:tabelaTarefas" />
+                            </h:commandLink> |
+
+                            <h:commandLink value="Concluir" action="#{tarefaController.concluirTarefa(tarefa.id)}"
+                                           rendered="#{!tarefa.concluida}">
+                                <f:ajax render=":tabelaForm:tabelaTarefas" />
+                            </h:commandLink>
+                        </div>
+                    </h:column>
+                </h:dataTable>
+            </h:form>
+        </div>
+    </div>
+</h:body>
+</html>
